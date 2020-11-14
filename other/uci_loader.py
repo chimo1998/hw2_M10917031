@@ -23,6 +23,9 @@ class Loader(object):
     def encode(self):
         for tag in self.encode_tags:
             t = pd.DataFrame(data=(self.enc.fit_transform(self.data[tag].to_numpy().reshape(-1,1)).toarray()))
+            names = t.columns.tolist()
+            new_names = dict(zip(names, ["%s_%s" % (tag, x) for x in names]))
+            t = t.rename(columns=new_names)
             self.data = pd.concat([self.data.drop(tag, axis=1), t], axis=1)
 
     def get_data(self):

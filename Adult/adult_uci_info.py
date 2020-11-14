@@ -1,7 +1,7 @@
 import uci_loader
-
+import pandas as pd
 class Adult():
-    def __init__(self):  
+    def __init__(self):
         self.url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.data'
         self.names = ['age','workclass','fnlwgt','education','education-num','marital-status','occupation','relationship','race','sex','capital-gain','capital-loss','hours-per-week','native-country','salary']
         self.drop = 'fnlwgt'

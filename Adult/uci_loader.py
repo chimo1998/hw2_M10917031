@@ -16,13 +16,16 @@ class Loader(object):
 
     def read_from_url(self):
         self.data = pd.read_csv(self.url, names=self.names)
-    
+ 
     def drop(self):
         self.data = self.data.drop(self.drop_tags, axis=1)
 
     def encode(self):
         for tag in self.encode_tags:
             t = pd.DataFrame(data=(self.enc.fit_transform(self.data[tag].to_numpy().reshape(-1,1)).toarray()))
+            names = t.columns.tolist()
+            new_names = dict(zip(names, ["%s_%s" % (tag, x) for x in names]))
+            t = t.rename(columns=new_names)
             self.data = pd.concat([self.data.drop(tag, axis=1), t], axis=1)
 
     def get_data(self):
