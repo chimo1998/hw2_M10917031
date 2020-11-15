@@ -10,7 +10,5 @@ xgb = XGBC(base_score=0.5, booster='gbtree', colsample_bylevel=1,
 #xgb = XGBC()
 uci = adult_uci_info.Adult()
 train_x, train_y, test_x, test_y = uci()
-train_y = train_y.iloc[:,0]
-test_y = test_y.iloc[:,0]
 xgb.fit(train_x, train_y)
 print(xgb.score(test_x, test_y))

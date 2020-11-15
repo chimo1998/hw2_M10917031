@@ -2,9 +2,10 @@ import pandas as pd
 from sklearn.preprocessing import OneHotEncoder as ohe
 import numpy as np
 from sklearn.model_selection import train_test_split as tts
+from normalizer import Normalizer
 
 class Loader(object):
-    def __init__(self, url, names, label_tag, drop_tags=None, encode_tags=None, test_size=0.2):
+    def __init__(self, url, names, label_tag, drop_tags=None, encode_tags=None, normalizer=Normalizer(), normal_tags=None, test_size=0.2):
         self.url = url
         self.names = names
         self.drop_tags = drop_tags
@@ -13,6 +14,11 @@ class Loader(object):
         self.label_tag = label_tag
         self.test_size = test_size
         self.enc = ohe(categories='auto')
+        self.normal_tags = normal_tags
+        self.normalizer = normalizer
+
+    def __call__(self, normal=False):
+        return self.load()
 
     def read_from_url(self):
         self.data = pd.read_csv(self.url, names=self.names)
@@ -31,10 +37,17 @@ class Loader(object):
     def get_data(self):
         train, test = tts(self.data, test_size=0.2)
         trainX = train.drop(self.label_tag, axis=1).sort_index()
-        trainY = pd.DataFrame(data=(self.enc.fit_transform(train[self.label_tag].to_numpy().reshape(-1,1)).toarray()))
+        trainY = train[self.label_tag].sort_index()
         testX = test.drop(self.label_tag, axis=1).sort_index()
-        testY = pd.DataFrame(data=(self.enc.fit_transform(test[self.label_tag].to_numpy().reshape(-1,1)).toarray()))
+        testY = test[self.label_tag].sort_index()
+        if not self.is_num(trainY[0]):
+            trainY = pd.DataFrame(data=(self.enc.fit_transform(trainY.to_numpy().reshape(-1,1)).toarray())).sort_index()
+            testY = pd.DataFrame(data=(self.enc.fit_transform(testY.to_numpy().reshape(-1,1)).toarray())).sort_index()
         return trainX, trainY, testX, testY
+
+    def normal(self):
+        self.normalizer.set_data([self.data],self.normal_tags)
+        self.normalizer()
 
     def load(self):
         self.read_from_url()
@@ -42,7 +55,15 @@ class Loader(object):
             self.drop()
         if self.encode_tags:
             self.encode()
+        if self.normal_tags:
+            self.normal()
         return self.get_data()
 
-    def __call__(self):
-        return self.load()
+    def is_num(self, v):
+        result = True
+        try:
+            tmp = int(v)
+            result = True
+        except:
+            result = False
+        return result
