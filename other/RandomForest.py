@@ -1,9 +1,9 @@
 import numpy as np
-from adult_uci_info import Adult
+from uci_info import Info
 from scorer import Scorer
 from sklearn.ensemble import RandomForestRegressor as RFR
 
-uci = Adult()
+uci = Info()
 train_x, train_y, test_x, test_y = uci()
 rfr = RFR(n_estimators=30, max_depth=4, max_features=0.6, n_jobs=-1)
 rfr.fit(train_x, train_y)
