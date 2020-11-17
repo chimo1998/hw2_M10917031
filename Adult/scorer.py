@@ -1,5 +1,5 @@
 import numpy as np
-
+from sklearn import metrics
 class Scorer():
     def __init__(self,y_pre, y_true):
         self.y_pre = y_pre
@@ -9,4 +9,4 @@ class Scorer():
     def MAPE(self):
         return (abs(self.y_pre - self.y_true) / self.y_true).sum() / len(self.y_pre) / 100
     def RMSE(self):
-        return np.sqrt(((self.y_pre - self.y_true)**2).sum() / len(self.y_pre))
+        return np.sqrt(metrics.mean_squared_error(self.y_true, self.y_pre))
