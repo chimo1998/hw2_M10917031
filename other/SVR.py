@@ -1,8 +1,8 @@
-from adult_uci_info import Adult
+from uci_info import Info
 from sklearn.svm import SVR
 from scorer import Scorer
 
-uci = Adult()
+uci = Info()
 train_x, train_y, test_x, test_y = uci()
 svr = SVR(kernel='poly',gamma='auto',C=10)
 svr.fit(train_x, train_y)

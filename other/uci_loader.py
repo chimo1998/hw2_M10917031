@@ -21,7 +21,7 @@ class Loader(object):
         return self.load()
 
     def read_from_url(self):
-        self.data = pd.read_csv(self.url, names=self.names)
+        self.data = pd.read_table(self.url, names=self.names, sep="\s+")
  
     def drop(self):
         self.data = self.data.drop(self.drop_tags, axis=1)
