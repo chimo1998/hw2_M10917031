@@ -3,6 +3,7 @@ from sklearn.preprocessing import OneHotEncoder as ohe
 import numpy as np
 from sklearn.model_selection import train_test_split as tts
 from normalizer import Normalizer
+from sklearn.impute import SimpleImputer
 
 class Loader(object):
     def __init__(self, url, names, label_tag, drop_tags=None, encode_tags=None, normalizer=Normalizer(), normal_tags=None, test_size=0.2):
@@ -22,6 +23,11 @@ class Loader(object):
 
     def read_from_url(self):
         self.data = pd.read_csv(self.url, names=self.names)
+
+    def impute(self):
+        imp = SimpleImputer(strategy='mean')
+        imp.fit(self.data)
+        self.data = pd.DataFrame(imp.fit_transform(self.data), columns=self.data.columns)
  
     def drop(self):
         self.data = self.data.drop(self.drop_tags, axis=1)
@@ -55,6 +61,7 @@ class Loader(object):
             self.drop()
         if self.encode_tags:
             self.encode()
+        self.impute()
         if self.normal_tags:
             self.normal()
         return self.get_data()

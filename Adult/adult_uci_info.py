@@ -4,8 +4,8 @@ class Adult():
     def __init__(self):
         self.url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.data'
         self.names = ['age','workclass','fnlwgt','education','education-num','marital-status','occupation','relationship','race','sex','capital-gain','capital-loss','hours-per-week','native-country','salary']
-        self.drop = []#'fnlwgt']
-        self.encode_tag = ['workclass', 'education', 'marital-status', 'occupation', 'relationship', 'race', 'sex', 'native-country', 'salary']
+        self.drop = ['fnlwgt','education']
+        self.encode_tag = ['workclass', 'marital-status', 'occupation', 'relationship', 'race', 'sex', 'native-country', 'salary']
         self.label_tag = 'hours-per-week'
         self.normalize_tag = ['age','fnlwgt','education-num','capital-gain','capital-loss']
     def load(self):
