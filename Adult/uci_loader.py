@@ -1,4 +1,5 @@
 import pandas as pd
+import os
 from sklearn.preprocessing import OneHotEncoder as ohe
 import numpy as np
 from sklearn.model_selection import train_test_split as tts
@@ -17,12 +18,17 @@ class Loader(object):
         self.enc = ohe(categories='auto')
         self.normal_tags = normal_tags
         self.normalizer = normalizer
+        self.split = 0
 
     def __call__(self, normal=False):
         return self.load()
 
     def read_from_url(self):
-        self.data = pd.read_csv(self.url, names=self.names)
+        os.chdir(os.path.dirname(__file__))
+        train = pd.read_csv(os.path.join(os.getcwd(),"adult.train.txt"), names=self.names)
+        test = pd.read_csv(os.path.join(os.getcwd(),"adult.test.txt"), names=self.names)
+        self.data = pd.concat([train,test]).reset_index()
+        self.split = len(train.index)
 
     def impute(self):
         imp = SimpleImputer(strategy='mean')
@@ -41,6 +47,8 @@ class Loader(object):
             self.data = pd.concat([self.data.drop(tag, axis=1), t], axis=1)
 
     def get_data(self):
+        train = self.data[:self.split]
+        test = self.data[self.split+1:]
         train, test = tts(self.data, test_size=0.2)
         trainX = train.drop(self.label_tag, axis=1).sort_index()
         trainY = train[self.label_tag].sort_index()
